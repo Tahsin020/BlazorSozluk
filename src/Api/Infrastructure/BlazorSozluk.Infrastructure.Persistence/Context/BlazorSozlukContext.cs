@@ -12,12 +12,14 @@ namespace BlazorSozluk.Infrastructure.Persistence.Context
     public class BlazorSozlukContext : DbContext
     {
         public const string DEFAULT_SCHEMA = "dbo";
+        
+        public BlazorSozlukContext()
+        {
 
+        }
         public BlazorSozlukContext(DbContextOptions options) : base(options)
         {
         }
-
-
         public DbSet<User> Users { get; set; }
         public DbSet<Entry> Entries { get; set; }
 
@@ -29,6 +31,17 @@ namespace BlazorSozluk.Infrastructure.Persistence.Context
         public DbSet<EntryCommentFavorite> EntryCommentFavorites { get; set; }
 
         public DbSet<EmailConfirmation> EmailConfirmations { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=blazorsozluk;Trusted_Connection=true";
+                optionsBuilder.UseSqlServer(connectionString, opt =>
+                {
+                    opt.EnableRetryOnFailure();
+                });
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
