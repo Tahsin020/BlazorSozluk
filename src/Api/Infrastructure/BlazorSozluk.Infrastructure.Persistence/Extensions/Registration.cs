@@ -1,4 +1,6 @@
-﻿using BlazorSozluk.Infrastructure.Persistence.Context;
+﻿using BlazorSozluk.Api.Application.Interfaces.Repositories;
+using BlazorSozluk.Infrastructure.Persistence.Context;
+using BlazorSozluk.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +18,7 @@ namespace BlazorSozluk.Infrastructure.Persistence.Extensions
         {
             services.AddDbContext<BlazorSozlukContext>(conf =>
             {
-                var connectionString = configuration["BlazorSozlukDbConnectionString"].ToString();
+                string connectionString = configuration["BlazorSozlukDbConnectionString"].ToString();
                 conf.UseSqlServer(connectionString, opt =>
                  {
                      opt.EnableRetryOnFailure();
@@ -25,6 +27,14 @@ namespace BlazorSozluk.Infrastructure.Persistence.Extensions
 
             //var seedData = new SeedData();
             //seedData.SeedAsync(configuration).GetAwaiter().GetResult();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IEntryRepository, EntryRepository>();
+            services.AddScoped<IEntryCommentFavoriteRepository, EntryCommentFavoriteRepository>();
+            services.AddScoped<IEntryCommentRepository, EntryCommentRepository>();
+            services.AddScoped<IEntryCommentVoteRepository, EntryCommentVoteRepository>();
+            services.AddScoped<IEntryFavoriteRepository, EntryFavoriteRepository>();
+            services.AddScoped<IEntryVoteRepository, EntryVoteRepository>();
 
             return services;
         }
